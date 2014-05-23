@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <!-- Display Product Name-->
+    <h1>{{ product }}</h1>
+
+    <!-- Display Product Image -->
+    {% for abc in images %}
+    <img src="{{ MEDIA_URL }}{{ abc.image }}" width='500'/>
+    {% endfor %}
+
+    <!--Display Categories-->
+    <ul>
+    {% for category in categories %}
+    <li>{{ category }}</li>
+    {% endfor %}
+    </ul>
+
+    <!-- Edit the Page -->
+    {% if edit %}
+    <a href='#'>Edit This Product</a>
+    {% endif %}
+
+{% endblock %}

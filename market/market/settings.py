@@ -85,18 +85,23 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "static-only")
 
 MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "media")
 
 MEDIA_URL = '/media/'
 
 
-STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "static-only")
-
-STATIC_URL = '/static/'
-
 STATICFILES_DIR = (
-    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "templates"),
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "static"),
 )
+
+TEMPLATE_DIRS = (
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static", "templates"),
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+)
+
 
 SITE_ID = 1

@@ -1,3 +1,25 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response, RequestContext, Http404
 
-# Create your views here.
+from .models import Product, Category, ProductImage
+
+
+def list_all(request):
+    products = Product.objects.filter(active=True)
+    return render_to_response("products/all.html", locals(), context_instance=RequestContext(request))
+
+
+def single(request, slug):
+    product = Product.objects.get(slug=slug)
+
+    images = product.productimage_set.all()
+
+    categories = product.productimage_set.all()
+    context = {
+        "product": product,
+        "categories": categories,
+        "edit": True,
+        "images": images,
+    }
+
+
+    return render_to_response("products/single.html", context, context_instance=RequestContext(request))
