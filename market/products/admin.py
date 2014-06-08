@@ -18,13 +18,14 @@ class ProductImageInline(admin.TabularInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
+    save_on_top = True
     list_display = ('__unicode__', 'description', 'current_price', 'order', 'categories', 'live_link')
     inlines = [TagInline, ProductImageInline]
-    search_fields = ['title', 'description', 'price', 'category__title', 'category__description']
-    list_filter = ['price', 'timestamp', 'updated']
+    search_fields = ['title', 'description', 'price', 'category__title', 'category__description', 'tag__tag']
+    list_filter = ['price', 'sale_price', 'timestamp', 'updated']
+    list_editable = ['description', 'order', ]
     prepopulated_fields = {"slug": ('title',)}
-
-    readonly_fields = ['categories', 'live_link', 'timestamp', 'updated']
+    readonly_fields = ['categories', 'live_link', 'timestamp', 'updated',]
 
     class Meta:
         model = Product
