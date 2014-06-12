@@ -18,6 +18,7 @@ def edit_product(request, slug):
     else:
         raise Http404
 
+
 def single(request, slug):
     product = Product.objects.get(slug=slug)
 
