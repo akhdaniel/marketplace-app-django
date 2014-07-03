@@ -1,11 +1,46 @@
-from django.shortcuts import render, render_to_response, RequestContext, Http404
+from django.shortcuts import render, render_to_response, RequestContext, Http404, HttpResponseRedirect
+from django.template.defaultfilters import slugify
+from django.forms.models import modelformset_factory
 
 from .models import Product, Category, ProductImage
-from .forms import ProductForm
+from .forms import ProductForm, ProductImageForm
+
 
 def list_all(request):
     products = Product.objects.filter(active=True)
     return render_to_response("products/all.html", locals(), context_instance=RequestContext(request))
+
+def add_product(request):
+    form = ProductForm(request.POST or None)
+    if form.is_valid():
+        product = form.save(commit=False)
+        product.user = request.user
+        product.slug = slugify(form.cleaned_data['title'])
+        product.active = False
+        product.save()
+        return HttpResponseRedirect('/products/%s'%(product.slug))
+
+    return render_to_response("products/edit.html", locals(), context_instance=RequestContext(request))
+
+
+def manage_product_image(request, slug):
+    try:
+        product = Product.objects.get(slug=slug)
+    except:
+        product = False
+
+    if request.user == product.user:
+        queryset = ProductImage.objects.filter(product__slug=slug)
+        ProductImageFormset = modelformset_factory(ProductImage, form=ProductImageForm)
+        formset = ProductImageFormset(request.POST or None, queryset=queryset )
+        form = ProductImageForm(request.POST or None)
+
+        if form.is_valid():
+            print "form is valid"
+        return render_to_response("products/manage_images.html", locals(), context_instance=RequestContext(request))
+    else:
+        raise Http404
+
 
 
 def edit_product(request, slug):
@@ -16,7 +51,12 @@ def edit_product(request, slug):
             product_edit = form.save(commit=False)
         return render_to_response("products/edit.html", locals(), context_instance=RequestContext(request))
     else:
-        raise Http404
+        form = ProductForm(request.POST or None, instance=instance)
+        if form.is_valid():
+            product_edit = form.save(commit=False)
+            product_edit.save()
+    return render_to_response("products/edit.html", locals(), context_instance=RequestContext(request))
+    #raise Http404
 
 
 def single(request, slug):
@@ -30,7 +70,7 @@ def single(request, slug):
         "categories": categories,
         "edit": True,
         "images": images,
-    }
+        }
 
 
     return render_to_response("products/single.html", context, context_instance=RequestContext(request))
