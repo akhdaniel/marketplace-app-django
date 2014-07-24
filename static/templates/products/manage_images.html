@@ -2,12 +2,21 @@
 
 {% block content %}
 
-<h1>Edit {{ instance.title }}</h1>
+    <h1>Edit {{ instance.title }}</h1>
 
-<form method="post" action="" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ formset.as_p }}
-    <input type="submit" value="Save Edit"/>
-</form>
+    <form method="post" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ formset.management_form }}
+
+        {% for form in formset %}
+
+            {{ form.as_p }}
+
+            <input type="submit" value="Save Edit"/>
+            <hr/>
+        {% endfor %}
+
+
+    </form>
 
 {% endblock %}

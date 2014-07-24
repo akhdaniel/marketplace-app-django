@@ -31,12 +31,19 @@ def manage_product_image(request, slug):
 
     if request.user == product.user:
         queryset = ProductImage.objects.filter(product__slug=slug)
-        ProductImageFormset = modelformset_factory(ProductImage, form=ProductImageForm)
-        formset = ProductImageFormset(request.POST or None, queryset=queryset )
+        ProductImageFormset = modelformset_factory(ProductImage, form=ProductImageForm, can_delete=True)
+        formset = ProductImageFormset(request.POST or None, request.FILES or None, queryset=queryset)
         form = ProductImageForm(request.POST or None)
 
         if form.is_valid():
-            print "form is valid"
+            for form in formset:
+                instance = form.save(commit=False)
+                # instance.product = product
+                #Anything we want here.
+                instance.save()
+            if formset.deleted_forms:
+                formset.save()
+
         return render_to_response("products/manage_images.html", locals(), context_instance=RequestContext(request))
     else:
         raise Http404
